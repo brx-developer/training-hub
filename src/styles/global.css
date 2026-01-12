@@ -6,7 +6,7 @@
   --color-bg: #181818; /* Fondo principal: casi negro */
   --color-secondary: #1f1f1f; /* Fondo de tarjetas o secciones */
   --color-text: #aaaaaa; /* Texto claro */
-  --color-accent: #ff4d4d; /* Hover o detalles */
+  --color-accent: #ea580c; /* Hover o detalles */
   --color-surface-dark: #404042;
 }
 .btn {
@@ -14,9 +14,8 @@
 }
 
 h1 {
-  @apply text-text text-4xl;
+  @apply mb-5 text-5xl;
 }
-
-p {
-  @apply text-text;
+h2 {
+  @apply mb-5 text-4xl;
 }
