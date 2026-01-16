@@ -21,12 +21,12 @@ import MainLayout from "@layouts/MainLayout.astro";
   <section class="mx-auto mt-14 max-w-7xl">
     <h2>Datos importantes 😁👍:</h2>
     <div class="flex w-full flex-wrap justify-center gap-5 md:flex-nowrap">
-      <StatCard value="5" label="entrenamientos esta semana" />
+      <StatCard id="week-count" label="entrenamientos esta semana" />
       <StatCard
-        value="240"
+        id="minutes-count"
         label="minutos entrenados en el último entrenamiento"
       />
-      <StatCard value="Boxeo" label="último entrenamiento" />
+      <StatCard id="training" label="último entrenamiento" />
     </div>
   </section>
 
@@ -95,7 +95,7 @@ import MainLayout from "@layouts/MainLayout.astro";
     <h2>Lista de sus últimos entrenamientos 😁👌</h2>
 
     <div
-      class="bg-secondary border-surface-dark relative overflow-x-auto rounded-xl border shadow-xs"
+      class="bg-secondary border-surface-dark relative h-90 overflow-x-auto rounded-xl border shadow-xs"
     >
       <table class="w-full text-left text-sm rtl:text-right">
         <thead
@@ -114,60 +114,115 @@ import MainLayout from "@layouts/MainLayout.astro";
             </th>
           </tr>
         </thead>
-        <tbody>
-          <tr class="bg-neutral-primary border-surface-dark border-b">
-            <th
-              scope="row"
-              class="text-heading px-6 py-4 font-medium whitespace-nowrap"
-            >
-              Boxeo
-            </th>
-            <td class="text-heading px-6 py-4 font-medium whitespace-nowrap">
-              10/01/26
-            </td>
-            <td class="text-heading px-6 py-4 font-medium whitespace-nowrap">
-              60 min
-            </td>
-            <td class="text-heading px-6 py-4 font-medium whitespace-nowrap">
-              🔥🔥🔥
-            </td>
-          </tr>
-          <tr class="bg-neutral-primary border-surface-dark border-b">
-            <th
-              scope="row"
-              class="text-heading px-6 py-4 font-medium whitespace-nowrap"
-            >
-              Calistenia
-            </th>
-            <td class="text-heading px-6 py-4 font-medium whitespace-nowrap">
-              09/01/26
-            </td>
-            <td class="text-heading px-6 py-4 font-medium whitespace-nowrap">
-              60 min
-            </td>
-            <td class="text-heading px-6 py-4 font-medium whitespace-nowrap">
-              🔥🔥🔥
-            </td>
-          </tr>
-          <tr class="bg-neutral-primary">
-            <th
-              scope="row"
-              class="text-heading px-6 py-4 font-medium whitespace-nowrap"
-            >
-              Boxeo
-            </th>
-            <td class="text-heading px-6 py-4 font-medium whitespace-nowrap">
-              08/01/26
-            </td>
-            <td class="text-heading px-6 py-4 font-medium whitespace-nowrap">
-              60 min
-            </td>
-            <td class="text-heading px-6 py-4 font-medium whitespace-nowrap">
-              🔥🔥🔥
-            </td>
-          </tr>
+        <tbody id="trainings-table">
+          <!--  -->
         </tbody>
       </table>
     </div>
   </section>
 </MainLayout>
+
+<script>
+  interface Training {
+    type: string;
+    duration: number;
+    intensity: number;
+    date: string;
+  }
+
+  const tableBody = document.getElementById("trainings-table");
+
+  const trainings = JSON.parse(localStorage.getItem("trainings")) || [];
+
+  const weekCard = document.getElementById("week-count");
+  const minutesCard = document.getElementById("minutes-count");
+  const trainingCard = document.getElementById("training");
+
+  const isThisWeek = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 7);
+
+    return date >= startOfWeek && date < endOfWeek;
+  };
+
+  const updateWeekCount = () => {
+    const trainings = JSON.parse(localStorage.getItem("trainings")) || [];
+    console.log(trainings.filter((t) => isThisWeek(t.date)).length);
+
+    weekCard.textContent = trainings.filter((t) => isThisWeek(t.date)).length;
+  };
+
+  updateWeekCount();
+
+  const addTrainingToTable = (t: Training) => {
+    const row = document.createElement("tr");
+
+    const [anio, mes, dia] = t.date.split("T")[0].split("-");
+
+    const fechaFormateada = `${dia}/${mes}/${anio.slice(-2)}`;
+
+    row.className = "bg-neutral-primary border-surface-dark border-b";
+    row.innerHTML = `
+    <td class="text-heading px-6 py-4 font-medium whitespace-nowrap">${t.type}</td>
+    <td class="text-heading px-6 py-4 font-medium whitespace-nowrap">${fechaFormateada}</td>
+    <td class="text-heading px-6 py-4 font-medium whitespace-nowrap">${t.duration} min</td>
+    <td class="text-heading px-6 py-4 font-medium whitespace-nowrap">${"🔥".repeat(t.intensity)}</td>
+    `;
+
+    trainingCard.textContent = t.type;
+    minutesCard.textContent = t.duration;
+
+    tableBody?.prepend(row);
+  };
+
+  trainings
+    .slice(-20) // últimos 20
+    .forEach(addTrainingToTable);
+
+  const form = document.getElementById("training-form") as HTMLFormElement;
+
+  const saveTraining = (training) => {
+    const trainings = JSON.parse(localStorage.getItem("trainings")) || [];
+    trainings.push(training);
+
+    // limitar a 20
+    if (trainings.length > 20) {
+      trainings.shift(); // elimina el más antiguo
+    }
+
+    localStorage.setItem("trainings", JSON.stringify(trainings));
+
+    addTrainingToTable(training);
+
+    // eliminar fila extra visible si pasa de 20
+    if (tableBody.children.length > 20) {
+      tableBody.lastElementChild.remove();
+    }
+
+    updateWeekCount();
+  };
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const data = new FormData(form);
+
+    const training = {
+      type: data.get("type-training"),
+      duration: Number(data.get("duration")),
+      intensity: Number(data.get("intensity")),
+      date: new Date().toISOString(),
+    };
+
+    form.reset();
+
+    saveTraining(training);
+  });
+</script>

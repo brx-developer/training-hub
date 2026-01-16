@@ -1,13 +1,14 @@
 ---
 interface Props {
   label: string;
-  value: string;
+  // value: string;
+  id?: string;
 }
 
-const { value, label } = Astro.props;
+const { label, id } = Astro.props;
 ---
 
 <div class="bg-surface-dark w-full space-y-3 rounded-xl p-10">
-  <p class="text-primary text-6xl font-semibold">{value}</p>
+  <p id={id} class="text-primary text-6xl font-semibold"></p>
   <p class="text-xl">{label}</p>
 </div>
