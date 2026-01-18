@@ -1,0 +1,79 @@
+---
+import MainLayout from "@layouts/MainLayout.astro";
+---
+
+<MainLayout title="Progreso">
+  <section class="mx-auto mt-14 max-w-7xl">
+    <h1 class="mb-6">📈 Progreso de entrenamiento</h1>
+
+    <!-- selector -->
+    <select id="training-select" class="bg-bg mb-6 rounded p-2">
+      <!-- opciones dinámicas -->
+    </select>
+
+    <!-- gráfica -->
+    <canvas id="progress-chart"></canvas>
+  </section>
+</MainLayout>
+
+<script>
+  import Chart from "chart.js/auto";
+  const trainings = JSON.parse(localStorage.getItem("trainings")) || [];
+
+  const types = [...new Set(trainings.map((t) => t.type))];
+
+  const select = document.getElementById("training-select");
+
+  types.forEach((type) => {
+    const option = document.createElement("option");
+    option.value = type;
+    option.textContent = type;
+    select.appendChild(option);
+  });
+
+  const getChartData = (type) => {
+    const filtered = trainings
+      .filter((t) => t.type === type)
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    return {
+      labels: filtered.map((t) => new Date(t.date).toLocaleDateString()),
+      data: filtered.map((t) => t.duration),
+    };
+  };
+
+  const ctx = document.getElementById("progress-chart");
+
+  let chart;
+
+  const renderChart = (type) => {
+    const { labels, data } = getChartData(type);
+
+    if (chart) chart.destroy(); // importante
+
+    chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Minutos entrenados",
+            data,
+            borderWidth: 2,
+            tension: 0.3,
+            borderColor: "#f97316",
+            backgroundColor: "#ea580c",
+          },
+        ],
+      },
+    });
+  };
+
+  select.addEventListener("change", (e) => {
+    renderChart(e.target.value);
+  });
+
+  if (types.length > 0) {
+    renderChart(types[0]);
+  }
+</script>

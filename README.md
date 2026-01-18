@@ -1,43 +1,100 @@
-# Astro Starter Kit: Minimal
+# 🏋️ Training Hub
 
-```sh
-npm create astro@latest -- --template minimal
+**Training Hub** es una aplicación web para registrar y visualizar el progreso de entrenamientos físicos de forma sencilla.
+Permite guardar entrenamientos, ver estadísticas clave y analizar el progreso mediante una gráfica interactiva.
+
+---
+
+## 🚀 Funcionalidades
+
+### 📋 Registro de entrenamientos
+
+- Tipo de entrenamiento (Boxeo, Calistenia, etc.)
+- Duración en minutos
+- Intensidad (1–5)
+- Fecha automática
+- Persistencia usando **localStorage**
+
+### 📊 Estadísticas dinámicas
+
+- Entrenamientos realizados en la semana actual
+- Minutos del último entrenamiento
+- Tipo del último entrenamiento
+
+### 📈 Gráfica de progreso
+
+- Gráfica lineal con **Chart.js**
+- Filtrado por tipo de entrenamiento
+- Datos ordenados por fecha
+- Visualización clara del progreso
+
+### 🗂️ Historial
+
+- Tabla con los últimos 20 entrenamientos
+- Los más recientes aparecen primero
+
+---
+
+## 🧠 Tecnologías usadas
+
+- Astro
+- JavaScript (Vanilla)
+- Chart.js
+- Tailwind CSS
+- localStorage
+
+---
+
+## 📁 Estructura del proyecto
+
+```
+src/
+├─ components/
+│  ├─ Navbar.astro
+│  ├─ Footer.astro
+│  ├─ StatCard.astro
+│
+├─ layouts/
+│  └─ MainLayout.astro
+│
+├─ pages/
+│  ├─ index.astro
+│  └─ progress.astro
+│
+└─ styles/
+   └─ global.css
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+---
 
-## 🚀 Project Structure
+## 🧪 Detalles técnicos
 
-Inside of your Astro project, you'll see the following folders and files:
+- Uso de `Set` para obtener tipos únicos de entrenamiento
+- Filtrado y ordenamiento por fecha
+- Manejo de estado con localStorage
+- Actualización dinámica del DOM
+- Límite de registros para mantener rendimiento
+- Destrucción segura de gráficos antes de re-renderizar
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+---
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 🧩 Futuras mejoras (Versión 2)
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+- Autenticación de usuarios
+- Base de datos real
+- CRUD completo
+- Gráficas avanzadas
+- Progreso por usuario
 
-Any static assets, like images, can be placed in the `public/` directory.
+---
 
-## 🧞 Commands
+## 👤 Autor
 
-All commands are run from the root of the project, from a terminal:
+**brx-developer**  
+Proyecto personal para reforzar lógica, estructura y visualización de datos.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+---
 
-## 👀 Want to learn more?
+## 📝 Nota
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Este proyecto corresponde a la **Versión 1** de Training Hub.
